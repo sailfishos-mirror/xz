@@ -1079,7 +1079,12 @@ stream_decode_mt(void *coder_ptr, const lzma_allocator *allocator,
 		const size_t in_old = *in_pos;
 		const lzma_ret ret = decode_block_header(coder, allocator,
 				in, in_pos, in_size);
-		coder->progress_in += *in_pos - in_old;
+
+		// Worker threads may finish earlier Blocks and need to update
+		// coder->progress_in at the same time with us.
+		mythread_sync(coder->mutex) {
+			coder->progress_in += *in_pos - in_old;
+		}
 
 		if (ret == LZMA_OK) {
 			// We didn't decode the whole Block Header yet.
