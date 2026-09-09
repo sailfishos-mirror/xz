@@ -51,6 +51,7 @@ if(BUILD_TESTING)
     #################
 
     set(LIBLZMA_TESTS
+        test_alone_decoder
         test_bcj_exact_size
         test_block_header
         test_check

@@ -49,6 +49,7 @@ check_PROGRAMS = \
 	test_index_hash \
 	test_bcj_exact_size \
 	test_memlimit \
+	test_alone_decoder \
 	test_lzip_decoder \
 	test_vli
 
@@ -65,6 +66,7 @@ TESTS = \
 	test_index_hash \
 	test_bcj_exact_size \
 	test_memlimit \
+	test_alone_decoder \
 	test_lzip_decoder \
 	test_vli \
 	test_files.sh \
