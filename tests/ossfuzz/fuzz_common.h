@@ -36,6 +36,9 @@ fuzz_code(lzma_stream *stream, const uint8_t *inbuf, size_t inbuf_size)
 	stream->next_in = inbuf;
 	stream->avail_in = inbuf_size / 2;
 
+	stream->next_out = NULL;
+	stream->avail_out = 0;
+
 	lzma_action action = LZMA_RUN;
 
 	lzma_ret ret;
