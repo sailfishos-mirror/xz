@@ -276,6 +276,7 @@ lzma_lz_decoder_init(lzma_next_coder *next, const lzma_allocator *allocator,
 
 	// Allocate and initialize the dictionary.
 	if (coder->dict.size != alloc_size) {
+		coder->dict.size = 0;
 		lzma_free(coder->dict.buf, allocator);
 		coder->dict.buf = lzma_alloc(alloc_size, allocator);
 		if (coder->dict.buf == NULL)
