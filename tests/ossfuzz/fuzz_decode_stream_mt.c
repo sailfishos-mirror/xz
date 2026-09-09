@@ -20,8 +20,7 @@ extern int
 LLVMFuzzerTestOneInput(const uint8_t *inbuf, size_t inbuf_size)
 {
 	lzma_stream strm = LZMA_STREAM_INIT;
-	strm.next_in = inbuf;
-	strm.avail_in = inbuf_size;
+	prepare_stream(&strm, inbuf, inbuf_size);
 
 	lzma_mt mt = {
 		.flags = /*LZMA_CONCATENATED |*/ LZMA_IGNORE_CHECK,
@@ -38,6 +37,9 @@ LLVMFuzzerTestOneInput(const uint8_t *inbuf, size_t inbuf_size)
 			mt.flags |= LZMA_CONCATENATED;
 
 		ret = lzma_stream_decoder_mt(&strm, &mt);
+
+		if (ret == LZMA_MEM_ERROR)
+			continue;
 
 		if (ret != LZMA_OK) {
 			// This should never happen unless the system has

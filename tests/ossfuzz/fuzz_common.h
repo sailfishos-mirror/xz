@@ -13,6 +13,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdatomic.h>
 #include "lzma.h"
 
 // Some header values can make liblzma allocate a lot of RAM
@@ -22,6 +23,42 @@
 
 // Amount of input to pass to lzma_code() per call at most.
 #define IN_CHUNK_SIZE 2047
+
+
+static atomic_ulong alloc_fail;
+
+
+static void *
+my_alloc(void *opaque, size_t nmemb, size_t size)
+{
+	(void)opaque;
+	(void)nmemb;
+
+	if (--alloc_fail == 0)
+		return NULL;
+
+	return malloc(size);
+}
+
+
+static void
+prepare_stream(lzma_stream *stream, const uint8_t *inbuf, size_t inbuf_size)
+{
+	stream->next_in = inbuf;
+	stream->avail_in = inbuf_size;
+
+	// Unless the input is very tiny, make one allocation in 1024 fail
+	// based on the last two input bytes and inbuf_size.
+	if (inbuf_size >= 10) {
+		alloc_fail = inbuf[inbuf_size - 2]
+				^ ((inbuf[inbuf_size - 1]) << 2)
+				^ (inbuf_size & 0x3FF);
+
+		static const lzma_allocator my_allocator
+				= { &my_alloc, NULL, NULL };
+		stream->allocator = &my_allocator;
+	}
+}
 
 
 static void

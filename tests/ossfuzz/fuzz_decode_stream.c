@@ -21,8 +21,7 @@ extern int
 LLVMFuzzerTestOneInput(const uint8_t *inbuf, size_t inbuf_size)
 {
 	lzma_stream strm = LZMA_STREAM_INIT;
-	strm.next_in = inbuf;
-	strm.avail_in = inbuf_size;
+	prepare_stream(&strm, inbuf, inbuf_size);
 
 	lzma_ret ret;
 
@@ -46,6 +45,9 @@ LLVMFuzzerTestOneInput(const uint8_t *inbuf, size_t inbuf_size)
 		// #define FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION.
 		ret = lzma_stream_decoder(&strm, MEM_LIMIT, LZMA_IGNORE_CHECK
 				| (i >= 2 ? LZMA_CONCATENATED : 0));
+
+		if (ret == LZMA_MEM_ERROR)
+			continue;
 
 		if (ret != LZMA_OK) {
 			// This should never happen unless the system has
