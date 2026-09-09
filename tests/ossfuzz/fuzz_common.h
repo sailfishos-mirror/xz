@@ -25,7 +25,8 @@
 
 
 static void
-fuzz_code(lzma_stream *stream, const uint8_t *inbuf, size_t inbuf_size) {
+fuzz_code(lzma_stream *stream, const uint8_t *inbuf, size_t inbuf_size)
+{
 	// Output buffer for decompressed data. This is write only; nothing
 	// cares about the actual data written here.
 	uint8_t outbuf[4096];

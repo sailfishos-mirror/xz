@@ -21,6 +21,7 @@ extern int
 LLVMFuzzerTestOneInput(const uint8_t *inbuf, size_t inbuf_size)
 {
 	lzma_stream strm = LZMA_STREAM_INIT;
+
 	// Initialize a LZMA alone decoder using the memory usage limit
 	// defined in fuzz_common.h
 	lzma_ret ret = lzma_alone_decoder(&strm, MEM_LIMIT);
