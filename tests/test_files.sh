@@ -134,7 +134,7 @@ fi
 # It should succeed when the file is passed twice to xz -l and
 # fail when passed thrice.
 I="$srcdir/files/bad-1-index-huge-uncomp.xz"
-if test -n "$XZ" && "$XZ" -l "$I" "$I" > /dev/null 2>&1; then
+if test -z "$XZ" || "$XZ" -l "$I" "$I" > /dev/null 2>&1; then
 	:
 else
 	echo "xz -l unexpectedly failed when the file was used twice: $I"
